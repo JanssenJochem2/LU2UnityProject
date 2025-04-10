@@ -37,7 +37,7 @@ public class ApiClientEnv : MonoBehaviour
 
         var json_data = JsonUtility.ToJson(request);
 
-        var response = await PerformApiCall("https://localhost:7239/Object/LoadAllObjects1", "POST", json_data, _acces_token);
+        var response = await PerformApiCall("https://avansict2211560lu2project.azurewebsites.net/Object/LoadAllObjects1", "POST", json_data, _acces_token);
 
         Debug.Log(response);
 
@@ -60,7 +60,7 @@ public class ApiClientEnv : MonoBehaviour
 
         var json_data = JsonUtility.ToJson(request);
 
-        var response = await PerformApiCall("https://localhost:7239/Object/RemoveWorld", "POST", json_data, _acces_token);
+        var response = await PerformApiCall("https://avansict2211560lu2project.azurewebsites.net/Object/RemoveWorld", "POST", json_data, _acces_token);
 
         SceneManager.LoadScene(1);
 
@@ -127,7 +127,7 @@ public class ApiClientEnv : MonoBehaviour
 
                 var json_data = JsonUtility.ToJson(request);
 
-                var response = await PerformApiCall("https://localhost:7239/Object/AddObject", "POST", json_data, _acces_token);
+                var response = await PerformApiCall("https://avansict2211560lu2project.azurewebsites.net/Object/AddObject", "POST", json_data, _acces_token);
                 Debug.Log("res1: " + response);
 
                 // Deserialize into the wrapper class which contains a list of PostItemDto
@@ -155,7 +155,7 @@ public class ApiClientEnv : MonoBehaviour
 
                 var json_data = JsonUtility.ToJson(request);
 
-                var response = await PerformApiCall("https://localhost:7239/Object/ReplaceObject", "POST", json_data, _acces_token);
+                var response = await PerformApiCall("https://avansict2211560lu2project.azurewebsites.net/Object/ReplaceObject", "POST", json_data, _acces_token);
 
                 Debug.Log("res: " + response);
 
@@ -194,7 +194,7 @@ public class ApiClientEnv : MonoBehaviour
 
             var json_data = JsonUtility.ToJson(request);
 
-            var response = await PerformApiCall("https://localhost:7239/Object/RemoveObject", "POST", json_data, _acces_token);
+            var response = await PerformApiCall("https://avansict2211560lu2project.azurewebsites.net/Object/RemoveObject", "POST", json_data, _acces_token);
 
             //// Deserialize into the wrapper class which contains a list of PostItemDto
             //var responseDto = JsonConvert.DeserializeObject<PostResponseDto>(response);

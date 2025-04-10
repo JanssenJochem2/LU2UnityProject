@@ -117,7 +117,7 @@ public class ApiClient : MonoBehaviour
 
             var json_data = JsonUtility.ToJson(request);
 
-            var response = await PerformApiCall("https://localhost:7239/auth/register", "POST", json_data);
+            var response = await PerformApiCall("https://avansict2211560lu2project.azurewebsites.net/auth/register", "POST", json_data);
 
             Debug.Log(response);
 
@@ -159,7 +159,7 @@ public class ApiClient : MonoBehaviour
 
             var json_data = JsonUtility.ToJson(request);
 
-            var response = await PerformApiCall("https://localhost:7239/auth/login", "POST", json_data);
+            var response = await PerformApiCall("https://avansict2211560lu2project.azurewebsites.net/auth/login", "POST", json_data);
 
             var responseDto = JsonUtility.FromJson<PostLoginResponseDto>(response);
 
@@ -190,7 +190,7 @@ public class ApiClient : MonoBehaviour
 
             var json_data = JsonUtility.ToJson(request);
 
-            var response = await PerformApiCall("https://localhost:7239/Object/GetUser", "POST", json_data, _acces_token);
+            var response = await PerformApiCall("https://avansict2211560lu2project.azurewebsites.net/Object/GetUser", "POST", json_data, _acces_token);
 
             SetUserId(response.ToString());
             PlayerPrefs.SetString("UserId", response.ToString());
@@ -218,7 +218,7 @@ public class ApiClient : MonoBehaviour
 
         var json_data = JsonUtility.ToJson(request);
 
-        var response = await PerformApiCall("https://localhost:7239/Object/GetWorlds", "POST", json_data, _acces_token);
+        var response = await PerformApiCall("https://avansict2211560lu2project.azurewebsites.net/Object/GetWorlds", "POST", json_data, _acces_token);
 
         var responseDto = JsonConvert.DeserializeObject<World[]>(response);
 
@@ -275,7 +275,7 @@ public class ApiClient : MonoBehaviour
 
             var json_data = JsonConvert.SerializeObject(request);
 
-            var response = await PerformApiCall("https://localhost:7239/Object/AddWorlds", "POST", json_data, _acces_token);
+            var response = await PerformApiCall("https://avansict2211560lu2project.azurewebsites.net/Object/AddWorlds", "POST", json_data, _acces_token);
             Debug.Log(response);
 
             var responseDto = JsonConvert.DeserializeObject<World>(response);
