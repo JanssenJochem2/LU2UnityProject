@@ -10,18 +10,13 @@ public class ApiClientEnv : MonoBehaviour
     public MenuPanel menuPanel;
 
     public string userId;
-    public string _acces_token;
     public string worldId;
+
+    private string _acces_token = ApiClient._acces_token;
 
     public void Start()
     {
-        userId = PlayerPrefs.GetString("userId");
-        _acces_token = PlayerPrefs.GetString("_acces_token");
         worldId = PlayerPrefs.GetString("worldId");
-        Debug.Log(PlayerPrefs.GetString("userId"));
-        Debug.Log(PlayerPrefs.GetString("_acces_token"));
-        Debug.Log(PlayerPrefs.GetString("worldId"));
-
         GetWorldData();
     }
 
@@ -37,7 +32,7 @@ public class ApiClientEnv : MonoBehaviour
 
         var json_data = JsonUtility.ToJson(request);
 
-        var response = await PerformApiCall("https://avansict2211560lu2project.azurewebsites.net/Object/LoadAllObjects1", "POST", json_data, _acces_token);
+        var response = await PerformApiCall("https://avansict2211560lu2project.azurewebsites.net/Object/LoadAllObjects", "POST", json_data, _acces_token);
 
         Debug.Log(response);
 
@@ -62,7 +57,7 @@ public class ApiClientEnv : MonoBehaviour
 
         var response = await PerformApiCall("https://avansict2211560lu2project.azurewebsites.net/Object/RemoveWorld", "POST", json_data, _acces_token);
 
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(0);
 
     }
 
@@ -176,7 +171,7 @@ public class ApiClientEnv : MonoBehaviour
 
     public async void RemoveWorldData(string? id, GameObject item)
     {
-        if (id.StartsWith("empty"))
+        if (!string.IsNullOrEmpty(id) && id.Trim().ToLower().StartsWith("empty"))
         {
             Debug.Log("removing item");
             menuPanel.RemoveItem(id, item);
@@ -204,9 +199,11 @@ public class ApiClientEnv : MonoBehaviour
             //{
             //    Debug.Log("Removed object");
             //}
+            menuPanel.RemoveItem(id, item);
+
+
         }
 
-        GetWorldData();
 
     }
 }

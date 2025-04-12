@@ -65,7 +65,7 @@ public class Draggable : MonoBehaviour // IBeginDragHandler, IDragHandler, IEndD
     public void RemoveObject()
     {
         apiClient.RemoveWorldData(objectId, this.gameObject);
-        Debug.Log("Removing");
+        Debug.Log("Removing: " + objectId);
     }
 
     public void MoveObject()

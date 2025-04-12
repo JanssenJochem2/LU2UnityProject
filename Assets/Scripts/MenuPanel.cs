@@ -12,6 +12,11 @@ public class MenuPanel : MonoBehaviour
 
     public List<PostItemDto> updatedItems = new List<PostItemDto>();
 
+    //Two lists: 1 client and 1 server
+    //On start the server list gets filled with items called serverItemsList
+    //On placing a new item, the new item will be place in a list: clientItemsList
+    //The client prefabs have a different re
+
     public void SetRequestData(string? objId, string prefId, float posX, float posY, float sclX, float sclY, float rotZ, int lZ)
     {
 
@@ -51,10 +56,34 @@ public class MenuPanel : MonoBehaviour
 
     public void RemoveItem(string id, GameObject item)
     {
-        Debug.LogWarning($"removing item: {id}");
-        List<PostItemDto> removedItems = new List<PostItemDto>(updatedItems);
-        items.Remove(item);
-        updatedItems.RemoveAll(item => item.ObjectId == id);
+        if (!string.IsNullOrEmpty(id) && id.Trim().ToLower().StartsWith("empty"))
+        {
+            Debug.LogWarning($"Removing item with ID: {id}");
+
+            // Remove the data from the list directly
+            updatedItems.RemoveAll(x => x.ObjectId == id);
+
+            // Remove the GameObject from the scene
+            if (item != null)
+            {
+                GameObject.Destroy(item);
+            }
+
+            // (Optional) Remove from other lists too, like your `items` list
+            items.Remove(item);
+        } else
+        {
+            objectList.RemoveAll(x => x.ObjectId == id);
+
+            // Remove the GameObject from the scene
+            if (item != null)
+            {
+                GameObject.Destroy(item);
+            }
+
+            // (Optional) Remove from other lists too, like your `items` list
+            items.Remove(item);
+        }
 
     }
 
