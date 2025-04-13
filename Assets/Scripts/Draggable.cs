@@ -1,3 +1,4 @@
+using UnityEditor;
 using UnityEngine;
 
 public class Draggable : MonoBehaviour // IBeginDragHandler, IDragHandler, IEndDragHandler
@@ -18,6 +19,13 @@ public class Draggable : MonoBehaviour // IBeginDragHandler, IDragHandler, IEndD
     public bool showRemove = false;
 
     public GameObject removeButton;
+    public GameObject moveButton;
+    public GameObject rotateButton;
+
+    public bool isSelected;
+
+    public Collider2D col;
+
 
     private void Start()
     {
@@ -28,16 +36,49 @@ public class Draggable : MonoBehaviour // IBeginDragHandler, IDragHandler, IEndD
     {
         if (isDragging)
         {
-
             trans.position = GetMousePosition();
+        }
 
+        if (isSelected)
+        {
+            removeButton.SetActive(true);
+            moveButton.SetActive(true);
+            rotateButton.SetActive(true);
+        } else
+        {
+            removeButton.SetActive(false);
+            moveButton.SetActive(false);
+            rotateButton.SetActive(false);
+        }
+
+        if (Input.GetMouseButtonDown(0)) // Left-click
+        {
+            Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero);
+
+            if (hit.collider != null && hit.collider.gameObject == gameObject)
+            {
+                // Deselect all others using menuPanel.items
+                foreach (var item in menuPanel.items)
+                {
+                    Draggable d = item.GetComponent<Draggable>();
+                    if (d != null)
+                    {
+                        d.isSelected = false;
+                    }
+                }
+
+                // Select this one
+                isSelected = true;
+                Debug.Log($"Selected {gameObject.name}");
+            }
         }
 
     }
 
     private Vector3 GetMousePosition()
     {
-        float gridSize = 0.64f;
+        float gridSize = 0.82f;
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
         float snappedX = Mathf.Round(mousePosition.x / gridSize) * gridSize;
@@ -70,17 +111,30 @@ public class Draggable : MonoBehaviour // IBeginDragHandler, IDragHandler, IEndD
 
     public void MoveObject()
     {
-        StartDragging();
+        if (isSelected)
+        {
+            StartDragging();
+        }
     }
+
+    //void OnMouseDown()
+    //{
+    //    if (gameObject == Selection.activeGameObject)
+    //    {
+    //        isSelected = !isSelected;
+    //    }
+    //}
 
     void OnMouseUp()
     {
         removeButton.SetActive(true);
-        Debug.Log(objectId);
-        if (isDragging)
+        Debug.Log(isSelected);
+        float currentZ = gameObject.transform.localRotation.eulerAngles.z;
+        if (isSelected || isDragging)
         {
-            isDragging = !isDragging;
-            menuPanel.SetRequestData(objectId, prefabIndex, trans.position.x, trans.position.y, 1f, 1f, 0f, 1);
+            Debug.Log(currentZ);
+            isDragging = false;
+            menuPanel.SetRequestData(objectId, prefabIndex, trans.position.x, trans.position.y, 1f, 1f, currentZ, 1);
             if (menuPanel != null)
             {
                 menuPanel.ShowMenu();

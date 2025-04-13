@@ -20,7 +20,7 @@ public class MenuPanel : MonoBehaviour
     public void SetRequestData(string? objId, string prefId, float posX, float posY, float sclX, float sclY, float rotZ, int lZ)
     {
 
-
+        Debug.Log(rotZ);
 
         PostItemDto existingItem = updatedItems.Find(item => item.ObjectId == objId);
 
@@ -130,9 +130,7 @@ public class MenuPanel : MonoBehaviour
 
         foreach (var item in itemList)
         {
-            var well = Instantiate(prefabs[Convert.ToInt32(item.PrefabId)],
-                new Vector3(item.PositionX, item.PositionY, 0f),
-                Quaternion.identity);
+            var well = Instantiate(prefabs[Convert.ToInt32(item.PrefabId)], new Vector3(item.PositionX, item.PositionY, 0f), Quaternion.Euler(0, 0, item.RotationZ));
 
             Draggable draggable = well.GetComponent<Draggable>();
             if (draggable != null)
