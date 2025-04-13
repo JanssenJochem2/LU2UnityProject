@@ -34,8 +34,6 @@ public class ApiClientEnv : MonoBehaviour
 
         var response = await PerformApiCall("https://avansict2211560lu2project.azurewebsites.net/Object/LoadAllObjects", "POST", json_data, _acces_token);
 
-        Debug.Log(response);
-
         var responseDto = JsonConvert.DeserializeObject<PostItemDto[]>(response);
 
         if (responseDto != null)
@@ -59,6 +57,88 @@ public class ApiClientEnv : MonoBehaviour
 
         SceneManager.LoadScene(0);
 
+    }
+
+    public async void SaveWorldData()
+    {
+        foreach (var item in menuPanel.updatedItems)
+        {
+
+            if (item.ObjectId == null || string.IsNullOrEmpty(item.ObjectId) || item.ObjectId == string.Empty || item.ObjectId.StartsWith("empty"))
+            {
+
+                var request = new PostItemDto2()
+                {
+                    WorldId = worldId,
+                    PrefabId = item.PrefabId,
+                    PositionX = item.PositionX,
+                    PositionY = item.PositionY,
+                    ScaleX = item.ScaleX,
+                    ScaleY = item.ScaleY,
+                    RotationZ = item.RotationZ,
+                    LayerZ = item.LayerZ
+                };
+
+
+                var json_data = JsonUtility.ToJson(request);
+
+                var response = await PerformApiCall("https://avansict2211560lu2project.azurewebsites.net/Object/AddObject", "POST", json_data, _acces_token);
+
+                var responseDto = JsonConvert.DeserializeObject<PostResponseDto>(response);
+
+                if (responseDto.message == "Created")
+                {
+                    Debug.Log("Saved world");
+                }
+            }
+            else
+            {
+                var request = new PostItemDto()
+                {
+                    ObjectId = item.ObjectId,
+                    PrefabId = item.PrefabId,
+                    PositionX = item.PositionX,
+                    PositionY = item.PositionY,
+                    ScaleX = item.ScaleX,
+                    ScaleY = item.ScaleY,
+                    RotationZ = item.RotationZ,
+                    LayerZ = item.LayerZ
+                };
+
+                var json_data = JsonUtility.ToJson(request);
+
+                var response = await PerformApiCall("https://avansict2211560lu2project.azurewebsites.net/Object/ReplaceObject", "POST", json_data, _acces_token);
+
+                Debug.Log("res: " + response);
+
+            }
+
+        }
+
+        GetWorldData();
+    }
+
+    public async void RemoveWorldData(string? id, GameObject item)
+    {
+        if (!string.IsNullOrEmpty(id) && id.Trim().ToLower().StartsWith("empty"))
+        {
+            menuPanel.RemoveItem(id, item);
+
+        }
+        else
+        {
+            var request = new PostremoveItemsDto()
+            {
+                ObjectId = id
+            };
+
+            var json_data = JsonUtility.ToJson(request);
+
+            var response = await PerformApiCall("https://avansict2211560lu2project.azurewebsites.net/Object/RemoveObject", "POST", json_data, _acces_token);
+
+            menuPanel.RemoveItem(id, item);
+
+        }
     }
 
     private async Task<string> PerformApiCall(string url, string method, string jsonData = null, string token = null)
@@ -92,118 +172,5 @@ public class ApiClientEnv : MonoBehaviour
                 return null;
             }
         }
-    }
-
-
-
-    public async void SaveWorldData()
-    {
-        Debug.Log(worldId);
-        foreach (var item in menuPanel.updatedItems)
-        {
-            Debug.Log(item.ObjectId);
-
-            if (item.ObjectId == null || string.IsNullOrEmpty(item.ObjectId) || item.ObjectId == string.Empty || item.ObjectId.StartsWith("empty"))
-            {
-                Debug.Log($"ThisAd{item.ObjectId}");
-
-                var request = new PostItemDto2()
-                {
-                    WorldId = worldId,
-                    PrefabId = item.PrefabId,
-                    PositionX = item.PositionX,
-                    PositionY = item.PositionY,
-                    ScaleX = item.ScaleX,
-                    ScaleY = item.ScaleY,
-                    RotationZ = item.RotationZ,
-                    LayerZ = item.LayerZ
-                };
-
-
-                var json_data = JsonUtility.ToJson(request);
-
-                var response = await PerformApiCall("https://avansict2211560lu2project.azurewebsites.net/Object/AddObject", "POST", json_data, _acces_token);
-                Debug.Log("res1: " + response);
-
-                // Deserialize into the wrapper class which contains a list of PostItemDto
-                var responseDto = JsonConvert.DeserializeObject<PostResponseDto>(response);
-
-                Debug.Log(responseDto.message);
-                if (responseDto.message == "Created")
-                {
-                    Debug.Log("Saved world");
-                }
-            }
-            else
-            {
-                var request = new PostItemDto()
-                {
-                    ObjectId = item.ObjectId,
-                    PrefabId = item.PrefabId,
-                    PositionX = item.PositionX,
-                    PositionY = item.PositionY,
-                    ScaleX = item.ScaleX,
-                    ScaleY = item.ScaleY,
-                    RotationZ = item.RotationZ,
-                    LayerZ = item.LayerZ
-                };
-
-                var json_data = JsonUtility.ToJson(request);
-
-                var response = await PerformApiCall("https://avansict2211560lu2project.azurewebsites.net/Object/ReplaceObject", "POST", json_data, _acces_token);
-
-                Debug.Log("res: " + response);
-
-                // Deserialize into the wrapper class which contains a list of PostItemDto
-                var responseDto = JsonConvert.DeserializeObject<PostResponseDto>(response);
-
-                Debug.Log(responseDto.message);
-                if (responseDto.message == "Replaced")
-                {
-                    Debug.Log("Replaced world");
-                }
-            }
-
-        }
-
-        GetWorldData();
-    }
-
-    public async void RemoveWorldData(string? id, GameObject item)
-    {
-        if (!string.IsNullOrEmpty(id) && id.Trim().ToLower().StartsWith("empty"))
-        {
-            Debug.Log("removing item");
-            menuPanel.RemoveItem(id, item);
-
-        }
-        else
-        {
-            Debug.Log("Removing object");
-            var request = new PostremoveItemsDto()
-            {
-                ObjectId = id
-            };
-
-            Debug.Log(request.ObjectId);
-
-            var json_data = JsonUtility.ToJson(request);
-
-            var response = await PerformApiCall("https://avansict2211560lu2project.azurewebsites.net/Object/RemoveObject", "POST", json_data, _acces_token);
-
-            //// Deserialize into the wrapper class which contains a list of PostItemDto
-            //var responseDto = JsonConvert.DeserializeObject<PostResponseDto>(response);
-
-            //Debug.Log(responseDto.message);
-            //if (responseDto.message == "Removed")
-            //{
-            //    Debug.Log("Removed object");
-            //}
-            menuPanel.RemoveItem(id, item);
-
-
-        }
-
-
     }
 }

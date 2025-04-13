@@ -2,14 +2,14 @@
 
 public class RotateObject : MonoBehaviour
 {
-    public GameObject target;              // The object to rotate
-    public float rotationStep = 90f;       // Snap angle
-    public float mouseThreshold = 0.5f;    // Mouse movement needed to trigger snap
-    public float cooldownTime = 0.2f;      // Delay between snaps
+    public GameObject target;
+    public float rotationStep = 90f;
+    public float mouseThreshold = 0.5f;
+    public float cooldownTime = 0.2f;
 
-    public bool isRotating = false;       // Is rotation active?
-    private bool canRotate = true;         // Can rotate based on cooldown
-    private bool ignoreClickOnce = false;  // To avoid immediate toggle-off
+    public bool isRotating = false;
+    private bool canRotate = true;
+    private bool ignoreClickOnce = false; 
 
     void Update()
     {
@@ -32,10 +32,7 @@ public class RotateObject : MonoBehaviour
             if (!ignoreClickOnce && Input.GetMouseButtonDown(0))
             {
                 isRotating = false;
-                Debug.Log("Rotation stopped by screen click.");
             }
-
-            // Reset the ignore flag after 1 frame
             ignoreClickOnce = false;
         }
     }
@@ -43,8 +40,7 @@ public class RotateObject : MonoBehaviour
     void OnMouseUpAsButton()
     {
         isRotating = true;
-        ignoreClickOnce = true; // Prevent toggle-off on same click
-        Debug.Log("Rotation started.");
+        ignoreClickOnce = true;
     }
 
     void SnapRotate(int direction)

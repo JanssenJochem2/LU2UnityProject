@@ -19,13 +19,9 @@ public class ApiClient : MonoBehaviour
 
     public WorldManager worldManager;
 
-    //public GameObject authPanel;
-    //public GameObject worldPanel;
-
     public static ApiClient apiclient { get; private set; }
     public static string _acces_token = null;
 
-    private string userId;
     public string worldId;
 
     void Awake()
@@ -33,34 +29,6 @@ public class ApiClient : MonoBehaviour
         apiclient = this;
         DontDestroyOnLoad(this.gameObject);
     }
-
-    //public void Start()
-    //{
-    //    if (!string.IsNullOrEmpty(_acces_token))
-    //    {
-    //        authPanel.SetActive(false);
-    //        worldPanel.SetActive(true);
-    //    }
-    //    else
-    //    {
-    //        worldPanel.SetActive(false);
-    //        authPanel.SetActive(true);
-    //    }
-    //}
-
-    //private void Update()
-    //{
-    //    if (!string.IsNullOrEmpty(_acces_token))
-    //    {
-    //        authPanel.SetActive(false);
-    //        worldPanel.SetActive(true);
-    //    }
-    //    else
-    //    {
-    //        worldPanel.SetActive(false);
-    //        authPanel.SetActive(true);
-    //    }
-    //}
 
     public string GetToken()
     {
@@ -70,11 +38,6 @@ public class ApiClient : MonoBehaviour
     public void SetWorldId(string id)
     {
         worldId = id;
-    }
-
-    public void SetUserId(string id)
-    {
-        userId = id;
     }
 
     public bool checkInputValid(string email, string password)
@@ -106,8 +69,6 @@ public class ApiClient : MonoBehaviour
 
             var response = await PerformApiCall("https://avansict2211560lu2project.azurewebsites.net/auth/register", "POST", json_data);
 
-            Debug.Log(response);
-
             var responseDto = JsonUtility.FromJson<PostLoginResponseDto>(response);
 
             if (checkInputValid(username, password))
@@ -135,8 +96,6 @@ public class ApiClient : MonoBehaviour
             string username = login_nameInput.text;
             string password = login_passwordInput.text;
 
-            Debug.Log(username + " / " + password);
-
             var request = new PostLoginRequestDto()
             {
                 email = username,
@@ -148,8 +107,6 @@ public class ApiClient : MonoBehaviour
             var response = await PerformApiCall("https://avansict2211560lu2project.azurewebsites.net/auth/login", "POST", json_data);
 
             var responseDto = JsonUtility.FromJson<PostLoginResponseDto>(response);
-
-            Debug.Log(responseDto.accessToken);
 
             _acces_token = responseDto.accessToken;
 

@@ -31,8 +31,6 @@ public class WorldManager : MonoBehaviour
     public ApiClient apiClient;
 
     private string _acces_token = ApiClient._acces_token;
-
-    //private string userId;
     public string worldId;
 
     public void Start()
@@ -82,8 +80,6 @@ public class WorldManager : MonoBehaviour
 
     public async void GetWorlds()
     {
-
-        Debug.Log(_acces_token);
         worlds.Clear();
 
         if (worlds == null)
@@ -99,8 +95,6 @@ public class WorldManager : MonoBehaviour
         {
             worlds.AddRange(responseDto);
         }
-
-        Debug.Log(worlds.Count());
 
         CreateButtons();
     }
@@ -124,20 +118,22 @@ public class WorldManager : MonoBehaviour
             TMP_Text buttonText = buttonObject.GetComponentInChildren<TMP_Text>();
             if (buttonText != null)
             {
-                buttonText.text = "Wereld - " + thisWorld.WorldName;
+
+                buttonText.text = "Wereld - " + thisWorld.WorldName + thisWorld.Width + thisWorld.Height;
             }
 
             UnityEngine.UI.Button button = buttonObject.GetComponent<UnityEngine.UI.Button>();
-            button.onClick.AddListener(() => OnWorldClick(thisWorld.WorldId));
+            button.onClick.AddListener(() => OnWorldClick(thisWorld));
 
             loadedWorlds.Add(buttonObject);
         }
     }
 
-    void OnWorldClick(string worldId)
+    void OnWorldClick(World world)
     {
-        Debug.Log("Button " + worldId + " clicked!");
-        PlayerPrefs.SetString("worldId", worldId.ToString());
+        PlayerPrefs.SetInt("worldWidth", world.Width);
+        PlayerPrefs.SetInt("worldHeight", world.Height);
+        PlayerPrefs.SetString("worldId", world.WorldId.ToString());
         SceneManager.LoadScene(1);
     }
 
@@ -156,14 +152,8 @@ public class WorldManager : MonoBehaviour
             var json_data = JsonConvert.SerializeObject(request);
 
             var response = await PerformApiCall("https://avansict2211560lu2project.azurewebsites.net/Object/AddWorlds", "POST", json_data, _acces_token);
-            Debug.Log(response);
 
             var responseDto = JsonConvert.DeserializeObject<World>(response);
-
-            if (responseDto == null)
-            {
-                Debug.Log(responseDto);
-            }
 
             GetWorlds();
 

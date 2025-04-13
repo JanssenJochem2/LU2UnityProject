@@ -4,20 +4,20 @@ public class Layout : MonoBehaviour
 {
     public class World
     {
-        public string WorldId { get; set; }  // Represents the unique ID of the world
-        public string PlayerId { get; set; } // Represents the player associated with the world
-        public string WorldName { get; set; }  // Represents the name of the world
-        public int Width { get; set; }  // Represents the width of the world
-        public int Height { get; set; } // Represents the height of the world
+        public string WorldId { get; set; }
+        public string PlayerId { get; set; }
+        public string WorldName { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
     }
 }
 
 public class WorldPost
 {
-    public string PlayerId { get; set; } // Represents the player associated with the world
-    public string WorldName { get; set; }  // Represents the name of the world
-    public int Width { get; set; }  // Represents the width of the world
-    public int Height { get; set; } // Represents the height of the world
+    public string PlayerId { get; set; }
+    public string WorldName { get; set; }
+    public int Width { get; set; }
+    public int Height { get; set; }
 }
 
 public class PostItemRequestDto

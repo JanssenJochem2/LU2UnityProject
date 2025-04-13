@@ -1,9 +1,8 @@
 using UnityEditor;
 using UnityEngine;
 
-public class Draggable : MonoBehaviour // IBeginDragHandler, IDragHandler, IEndDragHandler
+public class Draggable : MonoBehaviour 
 {
-    // The prefab to instantiate
     public bool isDragging = false;
 
     public MenuPanel menuPanel;
@@ -26,10 +25,12 @@ public class Draggable : MonoBehaviour // IBeginDragHandler, IDragHandler, IEndD
 
     public Collider2D col;
 
+    public ScaleAnimationHandler animationHandler;
 
     private void Start()
     {
         apiClient = FindAnyObjectByType<ApiClientEnv>();
+        animationHandler.Shake();
     }
 
     void Update()
@@ -51,14 +52,13 @@ public class Draggable : MonoBehaviour // IBeginDragHandler, IDragHandler, IEndD
             rotateButton.SetActive(false);
         }
 
-        if (Input.GetMouseButtonDown(0)) // Left-click
+        if (Input.GetMouseButtonDown(0))
         {
             Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero);
 
             if (hit.collider != null && hit.collider.gameObject == gameObject)
             {
-                // Deselect all others using menuPanel.items
                 foreach (var item in menuPanel.items)
                 {
                     Draggable d = item.GetComponent<Draggable>();
@@ -68,9 +68,8 @@ public class Draggable : MonoBehaviour // IBeginDragHandler, IDragHandler, IEndD
                     }
                 }
 
-                // Select this one
                 isSelected = true;
-                Debug.Log($"Selected {gameObject.name}");
+                animationHandler.OnSelect();
             }
         }
 
@@ -78,16 +77,47 @@ public class Draggable : MonoBehaviour // IBeginDragHandler, IDragHandler, IEndD
 
     private Vector3 GetMousePosition()
     {
+        int worldWidth = PlayerPrefs.GetInt("worldWidth");
+        int worldHeight = PlayerPrefs.GetInt("worldHeight");
+
         float gridSize = 0.82f;
+
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
         float snappedX = Mathf.Round(mousePosition.x / gridSize) * gridSize;
         float snappedY = Mathf.Round(mousePosition.y / gridSize) * gridSize;
 
+        bool isOutsideBounds = snappedX < -worldWidth / 2f || snappedX > worldWidth / 2f || snappedY < -worldHeight / 2f || snappedY > worldHeight / 2f;
+
+        AdjustTransparency(isOutsideBounds);
+
+        snappedX = Mathf.Clamp(snappedX, -worldWidth / 2f, worldWidth / 2f);
+        snappedY = Mathf.Clamp(snappedY, -worldHeight / 2f, worldHeight / 2f);
+
         Vector3 targetPosition = new Vector3(snappedX, snappedY, 0);
 
         return targetPosition;
     }
+
+    private void AdjustTransparency(bool isOutsideBounds)
+    {
+        Renderer renderer = gameObject.GetComponent<Renderer>();
+
+        if (renderer != null)
+        {
+            Color currentColor = renderer.material.color;
+
+            if (isOutsideBounds)
+            {
+                renderer.material.color = new Color(currentColor.r, currentColor.g, currentColor.b, 0.5f);
+            }
+            else
+            {
+                renderer.material.color = new Color(currentColor.r, currentColor.g, currentColor.b, 1f);
+            }
+        }
+    }
+
 
     public void SetId(string? id) { 
         objectId = id;
@@ -106,7 +136,6 @@ public class Draggable : MonoBehaviour // IBeginDragHandler, IDragHandler, IEndD
     public void RemoveObject()
     {
         apiClient.RemoveWorldData(objectId, this.gameObject);
-        Debug.Log("Removing: " + objectId);
     }
 
     public void MoveObject()
@@ -116,14 +145,6 @@ public class Draggable : MonoBehaviour // IBeginDragHandler, IDragHandler, IEndD
             StartDragging();
         }
     }
-
-    //void OnMouseDown()
-    //{
-    //    if (gameObject == Selection.activeGameObject)
-    //    {
-    //        isSelected = !isSelected;
-    //    }
-    //}
 
     void OnMouseUp()
     {
